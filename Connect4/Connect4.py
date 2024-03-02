@@ -1,4 +1,5 @@
 import time
+from RL4 import C4Env
 
 opp = {'R': 'Y', 'Y': 'R'}
 TABLE = {}
