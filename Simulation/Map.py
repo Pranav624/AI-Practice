@@ -1,4 +1,4 @@
-import pygame, random, time
+import pygame, random, time, numpy as np
 from Organism import Organism
 
 WIDTH = 700
@@ -25,16 +25,26 @@ def main():
         pygame.draw.rect(screen, BLACK, [position_x, position_y, ORGANISM_SIZE, ORGANISM_SIZE])
     pygame.display.update()
 
-    # Make the organisms move around
-    for epoch in range(3):
-        for _ in range(1000):
-            screen.fill(WHITE)
+    # Make organisms learn
+    for epoch in range(30):
+        for _ in range(100):
             for organism in ORGANISM_LIST:
                 organism.step()
-                pygame.draw.rect(screen, BLACK, [organism.get_position()[0], organism.get_position()[1], ORGANISM_SIZE, ORGANISM_SIZE])
-            pygame.display.update()
-            time.sleep(0.01)
-        
+                
+        for organism in ORGANISM_LIST:
+            organism.b_prop()
+            organism.f_prop()
+            organism.set_position(organism.get_initial_position()[0], organism.get_initial_position()[1])
+        print(f"Epoch {epoch + 1} completed")
+    
+    # See results
+    for _ in range(1000):
+        screen.fill(WHITE)
+        for organism in ORGANISM_LIST:
+            organism.step()
+            pygame.draw.rect(screen, BLACK, [organism.get_position()[0], organism.get_position()[1], ORGANISM_SIZE, ORGANISM_SIZE])
+        pygame.display.update()
+        time.sleep(0.01)
 
     time.sleep(100)
 
