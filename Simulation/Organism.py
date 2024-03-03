@@ -9,6 +9,7 @@ class Organism:
         self.__map_width = map_width
         self.__map_height = map_height
         self.__size = size
+        self.__color = (255, 255, 255)
         self.__genome = self.create_genome()
         self.__wih = np.random.uniform(-0.5, 0.5, (8, 16))
         self.__who = np.random.uniform(-0.5, 0.5, (4, 8))
@@ -19,7 +20,7 @@ class Organism:
         self.__nr_correct = 0
         self.__outputs = []
         self.f_prop()
-        self.__labels = np.array([1, 0, 0, 0])
+        self.__labels = np.array([0, 0, 0, 0])
         self.__learn_rate = learn_rate
 
     def get_initial_position(self):
@@ -41,19 +42,31 @@ class Organism:
     def get_labels(self):
         return self.__labels
     
+    def get_color(self):
+        return self.__color
+
     def create_genome(self):
-        # Return 16 character string
-        return random.choices(string.ascii_letters, k=16)
+        # Return 16 character list
+        genome = random.choices(string.ascii_letters, k=16)
+        ord_list = np.array([ord(char) for char in genome])
+        sum_genome = sum(ord_list)
+        if sum_genome % 4 == 0:
+            self.__color = (255, 0, 0)
+        elif sum_genome % 4 == 1:
+            self.__color = (0, 255, 0)
+        elif sum_genome % 4 == 2:
+            self.__color = (0, 0, 255)
+        else:
+            self.__color = (0, 0, 0)
+        return genome
         
 
     def f_prop(self):
         # Forward propogation, input -> hidden
-        # print(self.__ord_list.shape)
         h_pre = self.__bih + self.__wih @ self.__ord_list
         h = 1 / (1 + np.exp(-h_pre))
         self.__h = np.array(h)
         # Forward propogation, hidden -> output
-        # print(h.shape)
         o_pre = self.__bho + self.__who @ h
         o = 1 / (1 + np.exp(-o_pre))
         self.__outputs = o
@@ -99,51 +112,3 @@ class Organism:
         else:
             if self.__y <= self.__map_height - 2 * self.__size:
                 self.__y += self.__size
-
-
-# Testing
-        
-# s = random.choices(string.ascii_letters, k=16)
-# ord_list = [ord(char) for char in s]
-
-# wih = np.random.uniform(-0.5, 0.5, (8, 16))
-# who = np.random.uniform(-0.5, 0.5, (4, 8))
-# bih = [0 for _ in range(8)]
-# bho = [0 for _ in range(4)]
-
-# # Forward propogation, input -> hidden
-# h_pre = bih + wih @ ord_list
-# h = 1 / (1 + np.exp(-h_pre))
-# # Forward propogation, hidden -> output
-# o_pre = bho + who @ h
-# o = 1 / (1 + np.exp(-o_pre))
-# print(o)
-# total_value = sum(o)
-# probability_table = [i / total_value for i in o]
-# print(probability_table)
-# move = random.choices(o, weights=probability_table)
-# print(move)
-# if move == o[0]:
-#     print("left")
-# elif move == o[1]:
-#     print("right")
-# elif move == o[2]:
-#     print("up")
-# elif move == o[3]:
-#     print("down")
-                
-# arr1 = np.array([0.47282948, 0.53643491, 0.52880016, 0.58888472])
-# arr2 = np.array([0.47282948, 0.53643491, 0.52880016, 0.58888472])
-# arr3 = (arr1 - arr2)
-
-# print(arr1)
-# print(arr2)
-# print(np.sum(arr3 ** 2, axis=0))
-# print(1 / len(arr1) * np.sum((arr1 - arr2) ** 2, axis=0))
-# arr1 = np.array([1, 2, 3, 4])
-# print(arr1.shape)
-# arr2 = np.array(arr1)
-# print(arr2.shape)
-# arr2.shape += (1,)
-# print(arr2.shape)
-# print(arr1.shape)
