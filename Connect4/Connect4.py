@@ -1,10 +1,18 @@
-import time
-from RL4 import C4Env
+import time, pygame
 
 opp = {'R': 'Y', 'Y': 'R'}
 TABLE = {}
 TABLE2 = {}
 ENDTABLE = {}
+
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (200, 200, 200)
+RED = (255, 0, 0)
+YELLOW = (255, 255, 0)
+BLUE = (50, 50, 255)
+WIDTH = 700
+HEIGHT = 700
 
 def create_win_table():
     table = []
@@ -141,9 +149,27 @@ def display(board):
     return output
 
 def main():
-    ai = input("Which color is the AI (R or Y)? ").upper()
-
+    pygame.init()
+    screen = pygame.display.set_mode((WIDTH, HEIGHT))
+    screen.fill(WHITE)
+    pygame.display.set_caption("Connect 4")
+    clock = pygame.time.Clock()
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render('Test', True, BLACK, WHITE)
+    textRect = text.get_rect()
+    textRect.center = (WIDTH // 2, HEIGHT - 50)
+    
     board = [['.' for _ in range(7)] for _ in range(6)]
+
+    pygame.draw.rect(screen, BLUE, [40, 40, 620, 560])
+    for i in range(len(board)):
+        for j in range(len(board[0])):
+            pygame.draw.circle(screen, GRAY, (j*80+110, i*80+110), 30)
+    screen.blit(text, textRect)
+    pygame.display.update()
+
+    ai = input("Which color is the AI (R or Y)? ").upper()
+    
     print(display(board))
 
     win_table = create_win_table()
@@ -151,36 +177,78 @@ def main():
     turn_num = 1
     depth = 10
 
-    while end_test(board, win_table)[0] == False:
+    while end_test(board, win_table)[0] == False:        
         if turn != ai:
-            col = int(input(f"It's your turn ({turn}). Choose a column: "))
-            if col < 1 or col > 7:
-                print("That is not a valid column.")
-                continue
-            
+            move_made = False
+            col = -1
+            while not move_made:
+                for event in pygame.event.get():
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if 70 <= pygame.mouse.get_pos()[0] <= 150:
+                            col = 0
+                            move_made = True
+                        elif 150 <= pygame.mouse.get_pos()[0] <= 230:
+                            col = 1
+                            move_made = True
+                        elif 230 <= pygame.mouse.get_pos()[0] <= 310:
+                            col = 2
+                            move_made = True
+                        elif 310 <= pygame.mouse.get_pos()[0] <= 390:
+                            col = 3
+                            move_made = True
+                        elif 390 <= pygame.mouse.get_pos()[0] <= 470:
+                            col = 4
+                            move_made = True
+                        elif 470 <= pygame.mouse.get_pos()[0] <= 550:
+                            col = 5
+                            move_made = True
+                        elif 550 <= pygame.mouse.get_pos()[0] <= 630:
+                            col = 6
+                            move_made = True        
             try:
-                new_board = make_move(col - 1, turn, board)
+                new_board = make_move(col, turn, board)
             except:
-                print("That column is full.")
+                # print("That column is full.")
+                text = font.render('That column is full.', True, BLACK, WHITE)
+                textRect = text.get_rect()
+                textRect.center = (WIDTH // 2, HEIGHT - 50)
+                screen.blit(text, textRect)
                 continue
         else:
             print()
             t = time.time()
             move = minimax(board, turn, turn_num, ai, win_table, depth, -9999, 9999, True)[0]
             new_board = make_move(move, turn, board)
-            print(f"Bot ({ai}) played {move + 1} in {time.time() - t} seconds.")
+            text = font.render(f"Bot ({ai}) played {move + 1} in {round(time.time() - t, 2)} seconds.", True, BLACK, WHITE)
+            textRect = text.get_rect()
+            textRect.center = (WIDTH // 2, HEIGHT - 50)
+            screen.blit(text, textRect)
         
         board = new_board
         print(display(board))
+        for i in range(len(board)):
+            for j in range(len(board[0])):
+                if board[i][j] == '.':
+                    pygame.draw.circle(screen, GRAY, (j*80+110, i*80+110), 30)
+                elif board[i][j] == 'R':
+                    pygame.draw.circle(screen, RED, (j*80+110, i*80+110), 30)
+                else:
+                    pygame.draw.circle(screen, YELLOW, (j*80+110, i*80+110), 30)
+        pygame.display.update()
 
         turn = opp[turn]
         turn_num += 1
 
     winner = end_test(board, win_table)[1]
     if winner == '':
-        print("Game over! It's a tie.")
+        text = font.render("Game over! It's a tie.", True, BLACK, WHITE)
     else:
-        print(f"Game over! {winner} won.")
+        text = font.render(f"Game over! {winner} won.", True, BLACK, WHITE)
+    textRect = text.get_rect()
+    textRect.center = (WIDTH // 2, 50)
+    screen.blit(text, textRect)
+    pygame.display.update()
+    time.sleep(10)
 
 if __name__ == '__main__':
     main()

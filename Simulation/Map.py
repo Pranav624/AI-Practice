@@ -3,7 +3,7 @@ from Organism import Organism
 
 WIDTH = 700
 HEIGHT = 700
-ORGANISM_SIZE = 5
+ORGANISM_SIZE = 3
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 ORGANISM_LIST = []
@@ -32,11 +32,11 @@ def main():
         else:
             labels[3] = 1
         o.set_labels(labels)
-        pygame.draw.rect(screen, o.get_color(), [position_x, position_y, ORGANISM_SIZE, ORGANISM_SIZE])
+        pygame.draw.circle(screen, o.get_color(), (position_x, position_y), ORGANISM_SIZE)
     pygame.display.update()
 
     # Make organisms learn
-    gens = 100
+    gens = 50
     for gen in range(gens):
         # for _ in range(100):
         #     for organism in ORGANISM_LIST:
@@ -53,7 +53,7 @@ def main():
         screen.fill(WHITE)
         for organism in ORGANISM_LIST:
             organism.step()
-            pygame.draw.rect(screen, organism.get_color(), [organism.get_position()[0], organism.get_position()[1], ORGANISM_SIZE, ORGANISM_SIZE])
+            pygame.draw.circle(screen, organism.get_color(), (organism.get_position()[0], organism.get_position()[1]), ORGANISM_SIZE)
         pygame.display.update()
         # time.sleep(0.01)
 
