@@ -155,7 +155,7 @@ def main():
     pygame.display.set_caption("Connect 4")
     clock = pygame.time.Clock()
     font = pygame.font.Font('freesansbold.ttf', 32)
-    text = font.render('Test', True, BLACK, WHITE)
+    text = font.render("Is the bot R or Y?", True, BLACK, WHITE)
     textRect = text.get_rect()
     textRect.center = (WIDTH // 2, HEIGHT - 50)
     
@@ -168,7 +168,25 @@ def main():
     screen.blit(text, textRect)
     pygame.display.update()
 
-    ai = input("Which color is the AI (R or Y)? ").upper()
+    # ai = input("Which color is the AI (R or Y)? ").upper()
+    ai = ''
+    while ai == '':
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    ai = 'R'
+                    text = font.render(f"The bot is red!", True, BLACK, WHITE)
+                    textRect = text.get_rect()
+                    textRect.center = (WIDTH // 2, HEIGHT - 50)
+                    screen.blit(text, textRect)
+                    pygame.display.update()
+                elif event.key == pygame.K_y:
+                    ai = 'Y'
+                    text = font.render(f"The bot is yellow, it's your turn!", True, BLACK, WHITE)
+                    textRect = text.get_rect()
+                    textRect.center = (WIDTH // 2, HEIGHT - 50)
+                    screen.blit(text, textRect)
+                    pygame.display.update()
     
     print(display(board))
 
